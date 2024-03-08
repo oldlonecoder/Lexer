@@ -42,7 +42,7 @@ target_include_directories(${TargetName} PUBLIC
                            $<INSTALL_INTERFACE:include/${TargetName}>
 )
 
-target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} sqlite3)
+target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} AppBook)
 
 
 install(DIRECTORY

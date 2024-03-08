@@ -1,9 +1,9 @@
 //
 // Created by oldlonecoder on 24-01-27.
 //
-#include "ULexer/TokenTable.h"
+#include "Lexer/TokenTable.h"
 
-namespace Lexical
+namespace lex
 {
 /*!
  * @brief This is the default complete tokens reference of the Scrat Language.
@@ -11,7 +11,7 @@ namespace Lexical
  */
 [[maybe_unused]] size_t TokenTable::DeclareTable()
 {
-    Ref = TokenData::Array{
+    Ref = TokenInfo::Array{
         {
             .Prim = Type::Binary,
             .Sem = Type::Operator|Type::Binary,
@@ -860,5 +860,52 @@ namespace Lexical
 
 
     return Ref.size();
+}
+
+TokenTable::TokenTable(Util::Object *Par, const std::string &TableName) : Object(Par, TableName){}
+
+TokenTable::~TokenTable()
+{
+    Ref.clear();
+}
+
+TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
+{
+    int unicode = 0;
+    if (!*C)
+        return {};
+
+    for (auto token : Ref)
+    {
+        auto crs = C;
+        auto rtxt = token.Loc.Begin;
+        unicode = 0; // oops...
+        //std::size_t sz = std::strlen(rtxt);
+
+        if(*crs != *token.Loc.Begin) continue;
+
+        while ((*crs && *rtxt) && (*crs == *rtxt))
+        {
+            if (*crs < 0)
+                ++unicode; ///< @note oui/ yes; Soon/Bientôt je supporte quelques symboles UTF-8 (pi, xor,...)
+            ++crs;
+            ++rtxt;
+        }
+        if (*rtxt == 0)
+        {
+            if (*crs && !isspace(*crs))
+            {
+                if ((isalnum(*crs) || (*crs == '_')) && !token.HasType(Type::Operator))
+                    continue;
+            }
+
+            token.Loc.Begin = C;
+            token.Loc.End = crs - 1;
+            token.Loc.Length = (token.Loc.End - token.Loc.Begin) + 1;
+            return token;
+        }
+    }
+
+    return {};
 }
 }

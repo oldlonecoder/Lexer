@@ -15,19 +15,19 @@
  *****************************************************************************************/
 
 #pragma once
-#include "ULexer/Token.h"
+#include "Lexer/Token.h"
 
 #include <AppBook/Util/Object.h>
 
 
 
-namespace Lexical
+namespace lex
 {
 
 class LEXER_API TokenTable : public Util::Object
 {
-    TokenData::Array Ref;
-    TokenData::Array Product;
+    TokenInfo::Array Ref;
+    TokenInfo::Array Product;
 
 
 public:
@@ -36,10 +36,10 @@ public:
     TokenTable(Util::Object* Par, const std::string& TableName);
     ~TokenTable() override;
 
-    TokenData Scan(const char* C);
+    TokenInfo Scan( TokenInfo::SVIterator C);
 
     [[maybe_unused]] virtual size_t DeclareTable();
-    TokenData::Array& Tokens() { return Ref; }
+    TokenInfo::Array& TokensRef() { return Ref; }
 };
 
 } // ULexer

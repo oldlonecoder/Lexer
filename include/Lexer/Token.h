@@ -25,25 +25,25 @@
 namespace lex
 {
 
-struct LEXER_API TokenData
+struct LEXER_API TokenInfo
 {
-    using Array = std::vector<TokenData>;
-    using Iterator  = TokenData::Array::iterator;
-    using CIterator = TokenData::Array::const_iterator;
+    using Array = std::vector<TokenInfo>;
+    using Iterator  = TokenInfo::Array::iterator;
+    using CIterator = TokenInfo::Array::const_iterator;
     using SVIterator  = std::string_view::iterator;
 
     Type::T     Prim = Type::Null;
     Type::T     Sem = Type::Null;
     Mnemonic::T M = Mnemonic::Noop;
     Oper::T     D = Oper::Identifier;
-    struct LEXER_API TLocation
+    struct LEXER_API LocationInfo
     {
         [[maybe_unused]] size_t Line{0};
         [[maybe_unused]] size_t Column{0};
         [[maybe_unused]] size_t Offset{0};
         [[maybe_unused]] size_t Length{0};
-        TokenData::SVIterator Begin{};
-        TokenData::SVIterator End{};
+        TokenInfo::SVIterator Begin{};
+        TokenInfo::SVIterator End{};
         std::string_view operator()() const;
         [[maybe_unused]] [[nodiscard]] std::string Position() const;
     }Loc;
