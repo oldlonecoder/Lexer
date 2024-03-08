@@ -1,2 +1,2 @@
-# M-Lexer
+# Lexer
 Almost Modern Lexer in C++
