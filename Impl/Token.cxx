@@ -2,9 +2,9 @@
 // Created by oldlonecoder on 24-01-27.
 //
 
-#include "ULexer/Token.h"
+#include "Lexer/Token.h"
 
-namespace Lexical
+namespace lex
 {
 
 std::string_view TokenData::TLocation::operator()() const
@@ -20,4 +20,4 @@ std::string_view TokenData::TLocation::operator()() const
 }
 
 
-} // scrat
+} // lex

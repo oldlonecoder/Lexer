@@ -2,10 +2,10 @@
 // Created by oldlonecoder on 24-01-26.
 //
 
-#include "ULexer/Components.h"
+#include "Lexer/Components.h"
 #include <AppBook/Util/StrBreak.h>
 
-namespace Lexical
+namespace lex
 {
 
 
@@ -250,4 +250,4 @@ Mnemonic::T Component::MnemonicEnum(const std::string &MName)
 
 
 
-} // ULexer
+} // lex

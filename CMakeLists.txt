@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13..3.27 FATAL_ERROR)
 ## Project name
 
-project(M-Lexer VERSION 0.1.0 LANGUAGES CXX)
+project(Lexer VERSION 0.1.0 LANGUAGES CXX)
 
 message("Entering ${PROJECT_NAME} project configuration:")
 

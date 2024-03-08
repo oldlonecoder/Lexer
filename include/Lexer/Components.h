@@ -13,11 +13,11 @@
 #pragma once
 
 
-#include "M-Lexer/Interface.h"
+#include "Lexer/Interface.h"
 #include <AppBook/Util/StrAcc.h>
 #include <map>
 
-namespace MLex
+namespace lex
 {
 
 
@@ -344,18 +344,18 @@ constexpr T Noop_      = 21;
 
 }
 
-struct ULEXER_API Component
+struct LEXER_API Component
 {
 
-    static std::map<Lexical::Type::T,     std::string_view> TypeEnums;
-    static std::map<Lexical::Mnemonic::T, std::string_view> MnemonicEnums;
+    static std::map<lex::Type::T,     std::string_view> TypeEnums;
+    static std::map<lex::Mnemonic::T, std::string_view> MnemonicEnums;
 
     static std::string  Name(Type::T Typ);
     static Type::T      FromStr(const std::string& TName);
     static std::string  MnemonicName(Mnemonic::T M);
-    static Mnemonic::T     MnemonicEnum(const std::string& MName);
+    static Mnemonic::T  MnemonicEnum(const std::string& MName);
 };
 
-} // namespace MLex
+} // namespace lex
 
 

@@ -18,11 +18,11 @@
 
 
 
-#include "M-Lexer/Components.h"
+#include "Lexer/Components.h"
 
 #include <string_view>
 
-namespace MLex
+namespace lex
 {
 
 struct LEXER_API TokenData
@@ -36,20 +36,20 @@ struct LEXER_API TokenData
     Type::T     Sem = Type::Null;
     Mnemonic::T M = Mnemonic::Noop;
     Oper::T     D = Oper::Identifier;
-    struct ULEXER_API TLocation
+    struct LEXER_API TLocation
     {
         [[maybe_unused]] size_t Line{0};
         [[maybe_unused]] size_t Column{0};
         [[maybe_unused]] size_t Offset{0};
         [[maybe_unused]] size_t Length{0};
-        SVIterator Begin{nullptr};
-        SVIterator End{nullptr};
+        TokenData::SVIterator Begin{};
+        TokenData::SVIterator End{};
         std::string_view operator()() const;
         [[maybe_unused]] [[nodiscard]] std::string Position() const;
     }Loc;
 
 
-    struct ULEXER_API TFlags
+    struct LEXER_API TFlags
     {
         uint8_t V : 1;// This token is a usable value into expression.
         uint8_t S:  1;// Post semantic parser: Left-Assignable Object
