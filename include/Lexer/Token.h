@@ -58,8 +58,6 @@ struct LEXER_API TokenInfo
         uint8_t U : 1;// This token is a single utf-8 symbol { ex.:π,➪, ... }
     }Flags{0};
 
-    //SppToken* back_to_startof_line();
-
     explicit operator bool() const { return Loc.Begin != nullptr; }
     bool operator||(Type::T Sem_) const { return Sem || Sem_; }
 

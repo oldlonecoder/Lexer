@@ -2,6 +2,7 @@
 // Created by oldlonecoder on 24-01-27.
 //
 #include "Lexer/TokenTable.h"
+#include <AppBook/Book/AppBook.h>
 
 namespace lex
 {
@@ -871,6 +872,12 @@ TokenTable::~TokenTable()
 
 TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 {
+    if(Ref.empty())
+    {
+        AppBook::Warning() << " Tokens reference table is empty";
+        return {};
+    }
+
     int unicode = 0;
     if (!*C)
         return {};

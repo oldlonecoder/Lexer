@@ -19,9 +19,11 @@ add_library(
     ${TargetName}
     SHARED
     include/${TargetName}/Interface.h                              #global framework-wide macros definitions and dll export and import macros for MSVC.
-    include/${TargetName}/Components.h                      Impl/Components.cxx
-    include/${TargetName}/Token.h                           Impl/Token.cxx
-    include/${TargetName}/TokenTable.h                      Impl/TokenTable.cxx
+    include/${TargetName}/Components.h Impl/Components.cxx
+    include/${TargetName}/Token.h Impl/Token.cxx
+    include/${TargetName}/TokenTable.h Impl/TokenTable.cxx
+    Impl/Lexer.cxx
+    include/Lexer/Lexer.h
 )
 
 
