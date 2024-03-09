@@ -41,7 +41,7 @@ Book::Result Lexer::Engage()
         Stop = Scanner();
     }
 
-    return Book::Result::Notimplemented;
+    return Book::Result::Accepted;
 }
 
 Book::Result Lexer::Tokenize(TokenInfo Token)
@@ -56,7 +56,6 @@ Book::Result Lexer::Tokenize(TokenInfo Token)
         {Type::Text     ,&Lexer::TokenizeText},
         {Type::Number   ,&Lexer::TokenizeNumber},
         {Type::Id       ,&Lexer::TokenizeIdentifier},
-        {Type::Sign     ,&Lexer::TokenizeSignPrefix},
         {Type::Prefix   ,&Lexer::TokenizePrefix},
         {Type::Postfix  ,&Lexer::TokenizePostfix},
         {Type::LineComment,&Lexer::TokenizeCppComment},
