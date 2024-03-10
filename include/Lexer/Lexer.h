@@ -66,6 +66,9 @@ private:
     Book::Result TokenizePostfix        (TokenInfo& NewToken);
     Book::Result TokenizeCppComment     (TokenInfo& NewToken);
     Book::Result TokenizeCommentBloc    (TokenInfo& NewToken);
+
+
+    void PushToken(TokenInfo& Token);
 };
 
 } // lex

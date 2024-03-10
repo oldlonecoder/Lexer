@@ -146,5 +146,12 @@ Book::Result Lexer::TokenizeCommentBloc(TokenInfo &NewToken)
     return Book::Result::Ok;
 }
 
+void Lexer::PushToken(TokenInfo &Token)
+{
+    Scanner.Location().Offset = Scanner() - mConfig.Text.begin();
+
+
+}
+
 
 } // lex
