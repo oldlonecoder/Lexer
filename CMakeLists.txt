@@ -46,6 +46,11 @@ target_include_directories(${TargetName} PUBLIC
 
 target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} AppBook)
 
+add_executable(Test Test.cxx Test.h)
+target_link_libraries(Test AppBook Lexer)
+
+
+
 
 install(DIRECTORY
         include/${TargetName}/
@@ -70,8 +75,3 @@ add_custom_command(
 )
 
 
-#add_subdirectory(Test)
-
-
-
-#add_executable(${TargetName} main.cxx)
