@@ -52,24 +52,26 @@ Book::Result Lexer::Tokenize(TokenInfo Token)
         {Type::Unary    ,&Lexer::TokenizeUnaryOperator},
         {Type::Punc     ,&Lexer::TokenizePunctuation},
         {Type::Keyword  ,&Lexer::TokenizeKeyword},
-        {Type::Hex      ,&Lexer::TokenizeHex},
+//        {Type::Hex      ,&Lexer::TokenizeHex},
         {Type::Text     ,&Lexer::TokenizeText},
-        {Type::Number   ,&Lexer::TokenizeNumber},
-        {Type::Id       ,&Lexer::TokenizeIdentifier},
+//        {Type::Number   ,&Lexer::TokenizeNumber},
+//        {Type::Id       ,&Lexer::TokenizeIdentifier},
         {Type::Prefix   ,&Lexer::TokenizePrefix},
         {Type::Postfix  ,&Lexer::TokenizePostfix},
         {Type::LineComment,&Lexer::TokenizeCppComment},
         {Type::BlocComment,&Lexer::TokenizeCommentBloc}
     };
 
+    Book::Result R{};
     for(auto [T, Fn] : ScanFn)
     {
         if((T & Token.Sem) || (T & Token.Prim))
         {
-            if(!(this->*Fn)(Token))
-                return Book::Result::Rejected;
+            if(!(R = (this->*Fn)(Token)))
+                return R;
         }
     }
+    return R;
 }
 
 Book::Result Lexer::TokenizeBinaryOperator(TokenInfo &Token)
@@ -83,8 +85,29 @@ Book::Result Lexer::TokenizeBinaryOperator(TokenInfo &Token)
 
 Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
 {
-    return Book::Result::Ok;
+
+    auto R = Scanner.ScanNumber();
+    if(!!R.first)
+    {
+        NewToken.NumData = new Book::SVScanner::Numeric::Details{R.second};
+        NewToken.Loc = {
+            .Offset = static_cast<size_t>(NewToken.Loc.Begin - Scanner.Begin()),
+            .Length = NewToken.NumData->Seq.length(),
+            .Begin  = NewToken.NumData->Seq.begin(),
+            .End    = NewToken.NumData->Seq.end(),
+        };
+//        NewToken.Loc.Begin  = NewToken.NumData->Seq.begin();
+//        NewToken.Loc.End    = NewToken.NumData->Seq.end();
+//        NewToken.Loc.Length = NewToken.NumData->Seq.length();
+//        NewToken.Loc.Offset = NewToken.Loc.Begin - Scanner.Begin();
+        PushToken(NewToken);
+    }
+    else
+        return R.first;
+
+    return Book::Result::Accepted;
 }
+
 
 Book::Result Lexer::TokenizeUnaryOperator(TokenInfo &NewToken)
 {
@@ -118,7 +141,33 @@ Book::Result Lexer::TokenizeNumber(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
 {
-    return Book::Result::Ok;
+    auto A = Scanner(); // Prendre la position courante.
+
+loop_id_scan:
+    while(!Scanner.Eof(A) && std::isalpha(*A)) ++A;
+    if(Scanner.Eof(A))
+    {
+        PushToken(NewToken);
+        return Book::Result ::Accepted;
+    }
+    if(std::isalnum(*A) || (*A=='_')){ ++A; goto loop_id_scan;}
+
+    if(A == Scanner()) return Book::Result::Rejected;
+
+    Scanner.Sync();
+    Scanner.Reposition(A-Scanner());
+    NewToken.Loc = {
+        .Line   = Scanner.Location().Line,
+        .Column = Scanner.Location().Col,
+        .Offset = static_cast<size_t>(Scanner() - Scanner.Begin()),
+        .Length = static_cast<size_t>(A - Scanner()),
+        .Begin = Scanner(),
+        .End   = A
+    };
+
+
+    PushToken(NewToken);
+    return Book::Result::Accepted;
 }
 
 Book::Result Lexer::TokenizeSignPrefix(TokenInfo &NewToken)
@@ -148,9 +197,9 @@ Book::Result Lexer::TokenizeCommentBloc(TokenInfo &NewToken)
 
 void Lexer::PushToken(TokenInfo &Token)
 {
-    Scanner.Location().Offset = Scanner() - mConfig.Text.begin();
-
-
+    (*mConfig.Production) << Token;
+    Scanner.Reposition(static_cast<int>(Token.Loc.Length));
+    Scanner.SkipWS();
 }
 
 

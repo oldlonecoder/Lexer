@@ -20,4 +20,8 @@ std::string_view TokenInfo::LocationInfo::operator()() const
 }
 
 
+TokenInfo::~TokenInfo()
+{
+    if(NumData) delete NumData;
+}
 } // lex

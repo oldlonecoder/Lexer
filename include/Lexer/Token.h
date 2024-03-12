@@ -19,8 +19,7 @@
 
 
 #include "Lexer/Components.h"
-
-#include <string_view>
+#include <AppBook/Book/SVScanner.h>
 
 namespace lex
 {
@@ -36,6 +35,10 @@ struct LEXER_API TokenInfo
     Type::T     Sem = Type::Null;
     Mnemonic::T M = Mnemonic::Noop;
     Oper::T     D = Oper::Identifier;
+
+    ~TokenInfo();
+    Book::SVScanner::Numeric::Details* NumData{nullptr};
+
     struct LEXER_API LocationInfo
     {
         [[maybe_unused]] size_t Line{0};

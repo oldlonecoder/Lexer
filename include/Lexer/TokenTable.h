@@ -40,6 +40,8 @@ public:
 
     [[maybe_unused]] virtual size_t DeclareTable();
     TokenInfo::Array& TokensRef() { return Ref; }
+
+    TokenTable& operator << (TokenInfo& NewToken);
 };
 
 } // ULexer

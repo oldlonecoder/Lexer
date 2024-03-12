@@ -915,4 +915,10 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 
     return {};
 }
+
+TokenTable &TokenTable::operator<<(TokenInfo &NewToken)
+{
+    Product.emplace_back(NewToken);
+    return *this;
+}
 }
