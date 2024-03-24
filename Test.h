@@ -17,6 +17,7 @@
 #pragma once
 
 #include <Lexer/Lexer.h>
+#include <BookApplicationSkel/ApplicationSkel.h>
 
 //#ifndef LEXER_TEST_H
 //#define LEXER_TEST_H
@@ -24,9 +25,17 @@
 namespace lex
 {
 
-class Test
+class Test : public Book::ApplicationSkel
 {
 
+public:
+    Test() = default;
+    Test(const std::string& AppID, int argc=0, char** argv=nullptr);
+    ~Test() override;
+
+    Book::Result Run() override;
+protected:
+    Book::Result Setup() override;
 };
 
 } // lex
