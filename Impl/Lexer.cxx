@@ -8,7 +8,7 @@ namespace lex
 {
 Book::Result Lexer::operator()()
 {
-    return Book::Result::Ok;
+    return Engage();
 }
 
 Book::Result Lexer::operator()(Lexer::ConfigData &&CfgData)
@@ -20,15 +20,35 @@ Book::Result Lexer::operator()(Lexer::ConfigData &&CfgData)
 
 Book::Result Lexer::Engage()
 {
+    Book::Debug() << " Verify config data:";
+    if(!mConfig.Production)
+    {
+        AppBook::Error() << " Config data is empty!";
+        return Book::Result::Null_ptr;
+    }
+
+    mConfig.Production->DeclareTable();
     if(mConfig.Text.empty() || mConfig.Production->TokensRef().empty())
     {
         AppBook::Error() << " Config data is empty!";
         return Book::Result::Empty;
     }
 
+    Book::Debug() << " Now Building the Tokens Reference Table:";
+
+    Book::Debug() << " Here is the Ref Table Dump:" ;
+    mConfig.Production->DebugDumpRef();
+
+    //return Book::Result::Ok;
+
     Scanner = mConfig.Text;
     Scanner.SkipWS();
     std::string_view::iterator Stop{nullptr}; // Save current position.
+    Book::Debug() << "Before entering the loop: ";
+    Book::Out() << " Scanner stopped at {" << Book::Fn::Endl << Scanner() << Book::Fn::Endl << "}";
+    Book::Test() << " Stop...";
+    return Book::Result::Ok;
+
     while(!Scanner.Eof())
     {
         if(Stop == Scanner())

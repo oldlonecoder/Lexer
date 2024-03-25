@@ -43,7 +43,7 @@ namespace lex
             .M     = Mnemonic::OpenAbsOp, // |< x+1 >|;
             //                               ~~
             //                               ^
-            .D     = Oper::Paranthese,
+            .D     = Oper::Parenthese,
             .Loc   = {.Begin = Lexem::AbsBegin },
             .Flags = { .V = 1 }
         },
@@ -53,7 +53,7 @@ namespace lex
             .M     = Mnemonic::CloseAbsOp, // |< x+1 >|;
             //                                       ~~
             //                                       ^
-            .D     = Oper::Paranthese,
+            .D     = Oper::Parenthese,
             .Loc   = {.Begin = Lexem::AbsEnd },
             .Flags = { .V = 1 }
         },
@@ -351,7 +351,7 @@ namespace lex
             .Prim   = Type::OpenPair,
             .Sem    = Type::Operator|Type::Punc|Type::OpenPair,
             .M      = Mnemonic::OpenPar, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::OpenPar},
             .Flags  = {.V = 1}
         },
@@ -359,7 +359,7 @@ namespace lex
             .Prim   = Type::ClosePair,
             .Sem    = Type::Operator|Type::Punc|Type::ClosePair,
             .M      = Mnemonic::ClosePar, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::ClosePar},
             .Flags  = {.V = 1}
         },
@@ -367,7 +367,7 @@ namespace lex
             .Prim   = Type::OpenPair,
             .Sem    = Type::Operator|Type::Punc|Type::OpenPair,
             .M      = Mnemonic::Openindex, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::OpenIndex},
             .Flags  = {.V = 1}
         },
@@ -375,7 +375,7 @@ namespace lex
             .Prim   = Type::ClosePair,
             .Sem    = Type::Operator|Type::Punc|Type::ClosePair,
             .M      = Mnemonic::Closeindex, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::CloseIndex},
             .Flags  = {.V = 1}
         },
@@ -383,7 +383,7 @@ namespace lex
             .Prim   = Type::OpenPair,
             .Sem    = Type::Operator|Type::Punc|Type::OpenPair,
             .M      = Mnemonic::Openbrace, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::BraceBegin},
             .Flags  = {.V = 1}
         },
@@ -391,7 +391,7 @@ namespace lex
             .Prim   = Type::ClosePair,
             .Sem    = Type::Operator|Type::Punc|Type::ClosePair,
             .M      = Mnemonic::Closebrace, // Tow's complement
-            .D      = Oper::Paranthese,
+            .D      = Oper::Parenthese,
             .Loc    = {.Begin = Lexem::BraceEnd},
             .Flags  = {.V = 1}
         },
@@ -863,6 +863,16 @@ namespace lex
     return Ref.size();
 }
 
+
+
+
+size_t ArithmeticLexemes::DeclareTable()
+{
+    return TokenTable::DeclareTable();
+}
+
+
+
 TokenTable::TokenTable(Util::Object *Par, const std::string &TableName) : Object(Par, TableName){}
 
 TokenTable::~TokenTable()
@@ -921,4 +931,36 @@ TokenTable &TokenTable::operator<<(TokenInfo &NewToken)
     Product.emplace_back(NewToken);
     return *this;
 }
+
+void TokenTable::DebugDumpRef()
+{
+    Book::Debug() << " Dump the Tokens Reference Table:";
+
+    for(auto const& Token : Ref)
+        Book::Out() << Token.Details();
+
+
+}
+
+size_t TokenTable::AddMnemonicsComponentFromThisTable(const TokenInfo::Array &Table)
+{
+    for(auto const& Token: Table) {
+        auto I = Component::MnemonicEnums.find(Token.Prim);
+        if(I == Component::MnemonicEnums.end())
+            AppBook::Exception() [AppBook::Error() << " Mnemonic Component '" << Color::Yellow << Token.Loc() << Color::Reset <<"' already exists in this components table." <<Book::Fn::Endl << "-- Thus this program/service must be stopped right now."];
+        Component::MnemonicEnums[Token.Prim] = Token.Loc();
+    }
+    return Component::MnemonicEnums.size();
+}
+
+size_t TokenTable::AddMnemonicComponent(std::string_view Lexeme, Mnemonic::T Num)
+{
+    auto I = Component::MnemonicEnums.find(Num);
+    if(I != Component::MnemonicEnums.find(Num))
+        AppBook::Exception() [AppBook::Error() << " Mnemonic Component '" << Color::Yellow << Lexeme << Color::Reset <<"' already exists in this components table." <<Book::Fn::Endl << "-- Thus this program/service must be stopped right now."];
+    Component::MnemonicEnums[Num] = Lexeme;
+    return Component::MnemonicEnums.size();
+}
+
+
 }

@@ -72,7 +72,8 @@ struct LEXER_API TokenInfo
         return Loc();
     }
 
-    [[nodiscard]] bool HasType(Type::T Ty){ return Sem & Ty; }
+    [[nodiscard]] bool HasType(Type::T Ty) const{ return Sem & Ty; }
+    std::string Details() const;
 
 };
 

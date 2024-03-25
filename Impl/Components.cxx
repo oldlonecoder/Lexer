@@ -178,7 +178,7 @@ std::map<Mnemonic::T, std::string_view> Component::MnemonicEnums
     {Mnemonic::Catch,            Lexem::Catch},
     {Mnemonic::Throw,            Lexem::Throw},
     {Mnemonic::LineComment,      Lexem::LineComment},
-    {Mnemonic::BlocComment,      Lexem::BlocComment},
+    {Mnemonic::BlocComment,      Lexem::BlocComment}
 };
 
 
@@ -189,7 +189,6 @@ std::string Component::Name(Type::T Typ)
     std::string Text;
     Type::T TypeBits = Typ;
     //int                a, c, b;
-
     for(const auto &T: Component::TypeEnums)
     {
         if(!TypeBits)

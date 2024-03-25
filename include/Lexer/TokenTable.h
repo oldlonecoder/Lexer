@@ -26,6 +26,8 @@ namespace lex
 
 class LEXER_API TokenTable : public Util::Object
 {
+
+protected:
     TokenInfo::Array Ref;
     TokenInfo::Array Product;
 
@@ -42,7 +44,36 @@ public:
     TokenInfo::Array& TokensRef() { return Ref; }
 
     TokenTable& operator << (TokenInfo& NewToken);
+
+    void DebugDumpRef();
+
+
+protected:
+    static size_t AddMnemonicsComponentFromThisTable(const TokenInfo::Array & Table);
+
+    static size_t AddMnemonicComponent(std::string_view Lexeme, Mnemonic::T Num);
 };
+
+
+
+
+
+
+
+
+class LEXER_API ArithmeticLexemes : public TokenTable
+{
+public:
+
+    [[maybe_unused]] virtual size_t DeclareTable();
+};
+
+
+
+
+
+
+
 
 } // ULexer
 

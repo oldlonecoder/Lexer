@@ -24,9 +24,11 @@ Book::Result Test::Setup()
 {
     ApplicationSkel::Setup();
 
-    AppBook::CreateSection("Lexer-Test").Open().CreateSectionContents("Output");
-    Book::Select()["Lexer-Test"]["Output"];
+    AppBook::CreateSection("Lexer-Test").Open().CreateSectionContents("DevJournal");
+    Book::Select()["Lexer-Test"]["DevJournal"];
     Book::Debug() << " Lexer tests are ready to begin...";
+
+
     return Book::Result::Ok;
 }
 
