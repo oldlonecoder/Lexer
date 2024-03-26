@@ -30,6 +30,7 @@ class LEXER_API TokenTable : public Util::Object
 protected:
     TokenInfo::Array Ref;
     TokenInfo::Array Product;
+    friend class Lexer;
 
 
 public:
@@ -46,12 +47,11 @@ public:
     TokenTable& operator << (TokenInfo& NewToken);
 
     void DebugDumpRef();
-
+    TokenInfo const& ByName(std::string_view MName);
 
 protected:
-    static size_t AddMnemonicsComponentFromThisTable(const TokenInfo::Array & Table);
-
-    static size_t AddMnemonicComponent(std::string_view Lexeme, Mnemonic::T Num);
+//    static size_t AddMnemonicsComponentFromThisTable(const TokenInfo::Array & Table);
+//    static size_t AddMnemonicComponent(std::string_view Lexeme, Mnemonic::T Num);
 };
 
 

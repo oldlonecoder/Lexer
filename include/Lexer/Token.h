@@ -26,14 +26,15 @@ namespace lex
 
 struct LEXER_API TokenInfo
 {
-    using Array = std::vector<TokenInfo>;
-    using Iterator  = TokenInfo::Array::iterator;
-    using CIterator = TokenInfo::Array::const_iterator;
-    using SVIterator  = std::string_view::iterator;
+    using Array      = std::vector<TokenInfo>;
+    using Iterator   = TokenInfo::Array::iterator;
+    using CIterator  = TokenInfo::Array::const_iterator;
+    using SVIterator = std::string_view::iterator;
 
     Type::T     Prim = Type::Null;
-    Type::T     Sem = Type::Null;
-    Mnemonic::T M = Mnemonic::Noop;
+    Type::T     Sem  = Type::Null;
+    Mnemonic::T M    = Mnemonic::Noop;
+    std::string_view Name{}; // Pas vraiment le choix d'ajouter ça ici...
     Oper::T     D = Oper::Identifier;
 
     ~TokenInfo();

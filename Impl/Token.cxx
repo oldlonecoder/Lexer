@@ -40,7 +40,15 @@ TokenInfo::~TokenInfo()
 std::string TokenInfo::Details() const
 {
     StrAcc Out;
-    Out << '\'' << Color::Yellow << Loc() << Color::Reset << "' Primary Type:" << Color::DeepSkyBlue7 << Component::Name(Prim) << Color::Reset << "{" << Color::Turquoise4 <<  Component::Name(Sem) << Color::Reset << "}";
+    Out << '\'' << Color::Yellow << Loc() <<
+    Color::Reset << "' [" <<
+    Color::Yellow << Name <<
+    Color::Reset << "] Primary Type:" <<
+    Color::DeepSkyBlue7 << Component::Name(Prim) <<
+    Color::Reset << "{" <<
+    Color::Turquoise4 <<  Component::Name(Sem) <<
+    Color::Reset << "}";
+
     return Out();
 }
 

@@ -138,6 +138,8 @@ Book::Result Lexer::TokenizePunctuation(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeKeyword(TokenInfo &NewToken)
 {
+
+    PushToken(NewToken);
     return Book::Result::Ok;
 }
 
@@ -147,14 +149,10 @@ Book::Result Lexer::TokenizeString(TokenInfo &NewToken)
     return Book::Result::Ok;
 }
 
-Book::Result Lexer::TokenizeNumber(TokenInfo &NewToken)
-{
-    return Book::Result::Ok;
-}
 
 Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
 {
-    auto A = Scanner(); // Prendre la position courante.
+    std::string_view::iterator A = Scanner(); // Prendre la position courante.
 
 loop_id_scan:
     while(!Scanner.Eof(A) && std::isalpha(*A)) ++A;
@@ -185,16 +183,62 @@ loop_id_scan:
 
 Book::Result Lexer::TokenizeSignPrefix(TokenInfo &NewToken)
 {
-    return Book::Result::Ok;
+    if ((NewToken.M != Mnemonic::Sub) && (NewToken.M != Mnemonic::Add) &&
+        (!mConfig.Production->TokensRef().empty()) &&
+        (!mConfig.Production->TokensRef().back().HasType(Type::Binary | Type::Punc))
+    )
+        return Book::Result::Rejected;
+
+    NewToken.Prim = Type::Prefix;
+    NewToken.Sem &= ~Type::Postfix | Type::Postfix;
+    NewToken.Loc.Length = 1;
+    NewToken.Loc.End = NewToken.Loc.Begin + 1;
+    PushToken(NewToken);
+    return Book::Result::Accepted;
 }
 
+
+
+/*!
+ * @brief Tokenize prefix operator after verifying that the prefix-operator is well formed and does not break the arithmetic syntax rules
+ * @param NewToken
+ *
+ * @note a * *B;
+ * @return Book::Result::Code
+ */
 Book::Result Lexer::TokenizePrefix(TokenInfo &NewToken)
 {
-    return Book::Result::Ok;
+    if ((NewToken.M == Mnemonic::Decr) || (NewToken.M == Mnemonic::Incr) || (NewToken.M == Mnemonic::BinaryNot))
+    {
+        if(Production().empty())
+        {
+            PushToken(NewToken);
+            return Book::Result::Accepted;
+        }
+        if((Production().back().Flags.V) && (!Production().back().HasType(Type::Operator)))
+        {
+            NewToken.Prim = Type::Postfix;
+            NewToken.Sem &= ~Type::Prefix | Type::Postfix;
+            if(NewToken.M == Mnemonic::BinaryNot)
+                NewToken.M = Mnemonic::Factorial;
+        }
+        if(!Production().back().Flags.V)
+            throw AppBook::Exception()[AppBook::Syntax() << NewToken.Details() << ": Illegal;"];
+    }
+    PushToken(NewToken);
+    return Book::Result::Accepted;
 }
+
+
+
 
 Book::Result Lexer::TokenizePostfix(TokenInfo &NewToken)
 {
+
+    if((Production().empty()) || (!Production().back().Flags.V))
+        throw AppBook::Exception()[AppBook::Syntax() << NewToken.Details() << ": Illegal;"];
+
+    PushToken(NewToken);
     return Book::Result::Ok;
 }
 
@@ -208,11 +252,25 @@ Book::Result Lexer::TokenizeCommentBloc(TokenInfo &NewToken)
     return Book::Result::Ok;
 }
 
+
+/*!
+ * @brief
+ * @param Token
+ *
+ * @todo Assign location data here.
+ */
 void Lexer::PushToken(TokenInfo &Token)
 {
+    ///@TODO Assign location data here.
+
     (*mConfig.Production) << Token;
     Scanner.Reposition(static_cast<int>(Token.Loc.Length));
     Scanner.SkipWS();
+}
+
+TokenInfo::Array& Lexer::Production()
+{
+    return mConfig.Production->Ref;
 }
 
 
