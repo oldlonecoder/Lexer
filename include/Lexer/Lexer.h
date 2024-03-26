@@ -58,14 +58,12 @@ private:
     Book::Result TokenizePunctuation   (TokenInfo& NewToken);
     Book::Result TokenizeKeyword       (TokenInfo& NewToken);
     Book::Result TokenizeHex           (TokenInfo& NewToken);
-    Book::Result TokenizeText          (TokenInfo& NewToken);
-    Book::Result TokenizeNumber         (TokenInfo& NewToken);
-    Book::Result TokenizeIdentifier     (TokenInfo& NewToken);
-    Book::Result TokenizeSignPrefix     (TokenInfo& NewToken);
-    Book::Result TokenizePrefix         (TokenInfo& NewToken);
-    Book::Result TokenizePostfix        (TokenInfo& NewToken);
-    Book::Result TokenizeCppComment     (TokenInfo& NewToken);
-    Book::Result TokenizeCommentBloc    (TokenInfo& NewToken);
+    Book::Result TokenizeString        (TokenInfo& NewToken);
+    Book::Result TokenizeSignPrefix    (TokenInfo& NewToken);
+    Book::Result TokenizePrefix        (TokenInfo& NewToken);
+    Book::Result TokenizePostfix       (TokenInfo& NewToken);
+    Book::Result TokenizeCppComment    (TokenInfo& NewToken);
+    Book::Result TokenizeCommentBloc   (TokenInfo& NewToken);
 
 
     void PushToken(TokenInfo& Token);

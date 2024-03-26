@@ -72,10 +72,7 @@ Book::Result Lexer::Tokenize(TokenInfo Token)
         {Type::Unary    ,&Lexer::TokenizeUnaryOperator},
         {Type::Punc     ,&Lexer::TokenizePunctuation},
         {Type::Keyword  ,&Lexer::TokenizeKeyword},
-//        {Type::Hex      ,&Lexer::TokenizeHex},
-        {Type::Text     ,&Lexer::TokenizeText},
-//        {Type::Number   ,&Lexer::TokenizeNumber},
-//        {Type::Id       ,&Lexer::TokenizeIdentifier},
+        {Type::Text     ,&Lexer::TokenizeString},
         {Type::Prefix   ,&Lexer::TokenizePrefix},
         {Type::Postfix  ,&Lexer::TokenizePostfix},
         {Type::LineComment,&Lexer::TokenizeCppComment},
@@ -144,12 +141,8 @@ Book::Result Lexer::TokenizeKeyword(TokenInfo &NewToken)
     return Book::Result::Ok;
 }
 
-Book::Result Lexer::TokenizeHex(TokenInfo &NewToken)
-{
-    return Book::Result::Ok;
-}
 
-Book::Result Lexer::TokenizeText(TokenInfo &NewToken)
+Book::Result Lexer::TokenizeString(TokenInfo &NewToken)
 {
     return Book::Result::Ok;
 }
