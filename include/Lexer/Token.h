@@ -50,6 +50,8 @@ struct LEXER_API TokenInfo
         TokenInfo::SVIterator End{};
         std::string_view operator()() const;
         [[maybe_unused]] [[nodiscard]] std::string Position() const;
+        TokenInfo::LocationInfo& operator = (Book::SVScanner::LocationData const& Data);
+
     }Loc;
 
 

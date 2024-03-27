@@ -31,6 +31,14 @@ std::string_view TokenInfo::LocationInfo::operator()() const
     return { (Txt << Line << Column)() };
 }
 
+TokenInfo::LocationInfo &TokenInfo::LocationInfo::operator=(const Book::SVScanner::LocationData &Data)
+{
+    Line   = Data.Line;
+    Column = Data.Col;
+    Offset = Data.Offset;
+    return *this;
+}
+
 
 TokenInfo::~TokenInfo()
 {

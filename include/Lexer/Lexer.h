@@ -47,6 +47,7 @@ public:
 
 private:
 
+    void UpdateTokenLocation(TokenInfo& NewToken);
     Book::Result Engage();
     Book::Result Tokenize(TokenInfo);
 
