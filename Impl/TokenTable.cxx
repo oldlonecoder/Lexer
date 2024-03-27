@@ -985,6 +985,7 @@ TokenTable::~TokenTable()
 
 TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 {
+    Book::Debug() << " :" << *C;
     if(Ref.empty())
     {
         AppBook::Warning() << " Tokens reference table is empty";
@@ -1026,6 +1027,7 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
         }
     }
 
+    Book::Debug() << " No Token scanned..";
     return {};
 }
 
@@ -1076,6 +1078,14 @@ TokenInfo const &TokenTable::ByName(std::string_view MName)
         if(Token.Name == MName) return Token;
 
     throw AppBook::Exception() [Book::Fatal() << " Tokens identified by '" << Color::Yellow << MName << Color::Reset << " Is not in this table."];
+}
+
+void TokenTable::DebugDumpProduct()
+{
+    Book::Debug() << " Dump the Tokens Product Table:";
+
+    for(auto const& Token : Product)
+        Book::Out() << Token.Details();
 }
 
 

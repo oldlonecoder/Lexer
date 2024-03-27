@@ -47,6 +47,7 @@ public:
     TokenTable& operator << (TokenInfo& NewToken);
 
     void DebugDumpRef();
+    void DebugDumpProduct();
     TokenInfo const& ByName(std::string_view MName);
 
 protected:

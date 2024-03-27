@@ -34,12 +34,12 @@ struct LEXER_API TokenInfo
     Type::T     Prim = Type::Null;
     Type::T     Sem  = Type::Null;
     Mnemonic::T M    = Mnemonic::Noop;
-    std::string_view Name{}; // Pas vraiment le choix d'ajouter ça ici...
+    std::string_view Name{"Mnemonic::Undefined"}; // Pas vraiment le choix d'ajouter ça ici...
     Oper::T     D = Oper::Identifier;
 
     ~TokenInfo();
     Book::SVScanner::Numeric::Details* NumData{nullptr};
-
+    void NumericTr();
     struct LEXER_API LocationInfo
     {
         [[maybe_unused]] size_t Line{0};

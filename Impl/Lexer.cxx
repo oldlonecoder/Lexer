@@ -43,21 +43,21 @@ Book::Result Lexer::Engage()
 
     Scanner = mConfig.Text;
     Scanner.SkipWS();
-    std::string_view::iterator Stop{nullptr}; // Save current position.
+
     Book::Debug() << "Before entering the loop: ";
     Book::Out() << " Scanner stopped at {" << Book::Fn::Endl << Scanner() << Book::Fn::Endl << "}";
     Book::Test() << " Entering the loop:";
     //return Book::Result::Ok;
-
+    std::string_view::iterator Stop = Scanner(); // Save current position.
     while(!Scanner.Eof())
     {
+        if(!Tokenize(mConfig.Production->Scan(Scanner()))) return Book::Result::Rejected;
         if(Stop == Scanner())
         {
-            AppBook::Error() << " Infinite loop:" << Book::Fn::Endl << Scanner.Mark();
+            AppBook::Error() << " loop: No Scanning" << Book::Fn::Endl << Scanner.Mark();
             return Book::Result::Rejected;
         }
 
-        if(!Tokenize(mConfig.Production->Scan(Stop))) return Book::Result::Rejected;
         Stop = Scanner();
     }
 
@@ -66,6 +66,8 @@ Book::Result Lexer::Engage()
 
 Book::Result Lexer::Tokenize(TokenInfo Token)
 {
+    Book::Debug() << " :" << (Token ? Token.Details() : Scanner.Mark());
+
     static std::map<lex::Type::T, Book::Result (Lexer::*)(TokenInfo&)> ScanFn = {
         {Type::Binary           , &Lexer::TokenizeBinaryOperator},
         {Type::Null             , &Lexer::TokenizeDefault},
@@ -96,7 +98,7 @@ Book::Result Lexer::Tokenize(TokenInfo Token)
 
 Book::Result Lexer::TokenizeBinaryOperator(TokenInfo &NewToken)
 {
-    Book::Debug() << NewToken.Details();
+
 
     PushToken(NewToken); // S'occupera de mettre à jour le token et d'avancer le SVScanner. ;)
 
@@ -106,7 +108,7 @@ Book::Result Lexer::TokenizeBinaryOperator(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
 {
-    Book::Debug() << NewToken.Details();
+    Book::Debug() << " :" << (NewToken ? NewToken.Details() : Scanner.Mark());
 
     auto R = Scanner.ScanNumber();
     if(!!R.first)
@@ -116,11 +118,12 @@ Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
         NewToken.Loc.Length = NewToken.NumData->Seq.length();
         NewToken.Loc.Begin  = NewToken.NumData->Seq.begin();
         NewToken.Loc.End    = NewToken.NumData->Seq.end();
-
+        NewToken.Prim       = Type::Number;
+        NewToken.NumericTr();
         PushToken(NewToken);
     }
     else
-        return R.first;
+        return TokenizeIdentifier(NewToken);
 
     return Book::Result::Accepted;
 }
@@ -153,6 +156,8 @@ Book::Result Lexer::TokenizeString(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
 {
+    Book::Debug() << Scanner.Mark();
+
     auto I = Scanner.Scan([this](){
 
         auto Start = Scanner();
@@ -167,8 +172,7 @@ Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
         return Book::Result::Rejected;
     });
 
-    auto Location = Scanner.Sync();
-    NewToken.Loc = Location;
+    NewToken.Loc = Scanner.Sync();;
     NewToken.Loc.Length = static_cast<size_t>(I.second - I.first);
     NewToken.Loc.Begin = I.first;
     NewToken.Loc.End = I.second;
@@ -262,6 +266,7 @@ void Lexer::PushToken(TokenInfo &NewToken)
     (*mConfig.Production) << NewToken;
     Scanner.Reposition(static_cast<int>(NewToken.Loc.Length));
     Scanner.SkipWS();
+    Book::Debug() << NewToken.Details();
 }
 
 TokenInfo::Array& Lexer::Production()
