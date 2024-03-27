@@ -108,8 +108,9 @@ Book::Result Lexer::TokenizeBinaryOperator(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
 {
-    Book::Debug() << " :" << (NewToken ? NewToken.Details() : Scanner.Mark());
+    Book::Debug() << " Entering with:" << (NewToken ? NewToken.Details() : Scanner.Mark());
 
+    Book::Debug() << " Test ScanNumber:";
     auto R = Scanner.ScanNumber();
     if(!!R.first)
     {
@@ -123,8 +124,10 @@ Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
         PushToken(NewToken);
     }
     else
+    {
+        Book::Debug() << " Test identifier:";
         return TokenizeIdentifier(NewToken);
-
+    }
     return Book::Result::Accepted;
 }
 
@@ -137,6 +140,10 @@ Book::Result Lexer::TokenizeUnaryOperator(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizePunctuation(TokenInfo &NewToken)
 {
+    Scanner.Sync();
+    PushToken(NewToken);
+    Scanner.Reposition(NewToken.Loc.Offset + NewToken.Loc.Length);
+
     return Book::Result::Ok;
 }
 
@@ -176,7 +183,9 @@ Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
     NewToken.Loc.Length = static_cast<size_t>(I.second - I.first);
     NewToken.Loc.Begin = I.first;
     NewToken.Loc.End = I.second;
-
+    NewToken.Prim    = Type::Id;
+    NewToken.Sem     = Type::Id|Type::Leaf;
+    NewToken.Flags = { .V = 1 };
     PushToken(NewToken);
     return Book::Result::Accepted;
 }
@@ -261,12 +270,13 @@ Book::Result Lexer::TokenizeCommentBloc(TokenInfo &NewToken)
  */
 void Lexer::PushToken(TokenInfo &NewToken)
 {
-    NewToken.Loc.Length = NewToken.Loc.End-NewToken.Loc.Begin;
+    //NewToken.Loc.Length = NewToken.Loc.End-NewToken.Loc.Begin;
 
     (*mConfig.Production) << NewToken;
-    Scanner.Reposition(static_cast<int>(NewToken.Loc.Length));
+    //Scanner.Reposition(static_cast<int>(NewToken.Loc.Length));
     Scanner.SkipWS();
-    Book::Debug() << NewToken.Details();
+    Book::Debug() << Scanner.Mark();
+    //Book::Debug() << NewToken.Details();
 }
 
 TokenInfo::Array& Lexer::Production()

@@ -53,13 +53,12 @@ private:
 
     ConfigData mConfig;
 
-    Book::Result TokenizeIdentifier(TokenInfo &NewToken);
+    Book::Result TokenizeIdentifier    (TokenInfo &NewToken);
     Book::Result TokenizeBinaryOperator(TokenInfo&);
     Book::Result TokenizeDefault       (TokenInfo& NewToken);
     Book::Result TokenizeUnaryOperator (TokenInfo& NewToken);
     Book::Result TokenizePunctuation   (TokenInfo& NewToken);
     Book::Result TokenizeKeyword       (TokenInfo& NewToken);
-    //Book::Result TokenizeHex           (TokenInfo& NewToken);
     Book::Result TokenizeString        (TokenInfo& NewToken);
     Book::Result TokenizeSignPrefix    (TokenInfo& NewToken);
     Book::Result TokenizePrefix        (TokenInfo& NewToken);

@@ -31,9 +31,10 @@ std::map<Book::SVScanner::Numeric::Details::SizeType, Type::T> NumMap =
 
 std::string_view TokenInfo::LocationInfo::operator()() const
 {
-    auto E = End;
+    std::string_view::iterator E = End;
     if(!Begin) return NullMsg;
     if (!E) E = Begin + Length;
+    Book::Debug() << " Length: " << Length;
     return {Begin,E};
 }
 
@@ -61,7 +62,7 @@ TokenInfo::~TokenInfo()
 std::string TokenInfo::Details() const
 {
     StrAcc Out;
-    Out << '\'' << Color::Yellow << Loc() <<
+    Out << '\'' << Color::Yellow << *Text().end() <<
     Color::Reset << "' [" <<
     Color::Yellow << Name <<
     Color::Reset << "] Primary Type:" <<
@@ -77,7 +78,8 @@ void TokenInfo::NumericTr()
 {
     if(!NumData)
         throw AppBook::Exception() [Book::Error() << " Cannot call TokenInfo::NumericTr on un-scanned or non-numeric token."];
-    Sem |= NumMap[NumData->Size];
+    Sem |= Type::Number | Type::Const | NumMap[NumData->Size] | Type::Leaf;
 }
+
 
 } // lex

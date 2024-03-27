@@ -998,8 +998,8 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 
     for (auto token : Ref)
     {
-        auto crs = C;
-        auto rtxt = token.Loc.Begin;
+        std::string_view::iterator crs = C;
+        std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
@@ -1021,8 +1021,8 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
             }
 
             token.Loc.Begin = C;
-            token.Loc.End = crs - 1;
-            token.Loc.Length = (token.Loc.End - token.Loc.Begin) + 1;
+            token.Loc.End = crs;
+            token.Loc.Length = (token.Loc.End - token.Loc.Begin);
             return token;
         }
     }
