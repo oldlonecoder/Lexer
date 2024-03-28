@@ -351,8 +351,8 @@ struct LEXER_API Component
     static std::map<lex::Type::T,     std::string_view> TypeEnums;
     //static std::map<lex::Mnemonic::T, std::string_view> MnemonicEnums;
 
-    static std::string  Name(Type::T Typ);
-    static Type::T      FromStr(const std::string& TName);
+    static std::string  TypeName(Type::T Typ);
+    static Type::T      TypeEnum(const std::string& TName);
 };
 
 } // namespace lex

@@ -998,36 +998,42 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 
     for (auto token : Ref)
     {
+        Book::Debug() << "Token Ref '" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
-        if(*crs != *token.Loc.Begin) continue;
-
-        while ((*crs && *rtxt) && (*crs == *rtxt))
+        if(*crs != *rtxt) {
+            Book::Debug() << *crs << " <> " << *rtxt;
+            continue;
+        }
+        Book::Debug() << *crs << " <==> " << *rtxt;
+        while ((rtxt && crs) && (*crs && *rtxt) && (*crs == *rtxt))
         {
             if (*crs < 0)
                 ++unicode; ///< @note oui/ yes; Soon/Bientôt je supporte quelques symboles UTF-8 (pi, xor,...)
+
             ++crs;
             ++rtxt;
+            Book::Debug() << *crs << " <==> " << ( rtxt ?  *rtxt : ' ');
         }
-        if (*rtxt == 0)
+        if (!rtxt || (*rtxt == 0))
         {
             if (*crs && !isspace(*crs))
             {
-                if ((isalnum(*crs) || (*crs == '_')) && !token.HasType(Type::Operator))
+                if ((isalnum(*crs) || (*crs == '_')) && !token.HasType(Type::Operator|Type::Punc))
                     continue;
             }
 
             token.Loc.Begin = C;
-            token.Loc.End = crs;
-            token.Loc.Length = (token.Loc.End - token.Loc.Begin);
+            token.Loc.End = --crs;
+            token.Loc.Length = (token.Loc.End - token.Loc.Begin)+1;
             return token;
         }
     }
 
-    Book::Debug() << " No Token scanned..";
+    Book::Debug() << " No match.";
     return {};
 }
 
@@ -1046,26 +1052,6 @@ void TokenTable::DebugDumpRef()
 
 
 }
-
-//size_t TokenTable::AddMnemonicsComponentFromThisTable(const TokenInfo::Array &Table)
-//{
-//    for(auto const& Token: Table) {
-//        auto I = Component::MnemonicEnums.find(Token.Prim);
-//        if(I == Component::MnemonicEnums.end())
-//            AppBook::Exception() [AppBook::Error() << " Mnemonic Component '" << Color::Yellow << Token.Loc() << Color::Reset <<"' already exists in this components table." <<Book::Fn::Endl << "-- Thus this program/service must be stopped right now."];
-//        Component::MnemonicEnums[Token.Prim] = Token.Loc();
-//    }
-//    return Component::MnemonicEnums.size();
-//}
-//
-//size_t TokenTable::AddMnemonicComponent(std::string_view Lexeme, Mnemonic::T Num)
-//{
-//    auto I = Component::MnemonicEnums.find(Num);
-//    if(I != Component::MnemonicEnums.find(Num))
-//        AppBook::Exception() [AppBook::Error() << " Mnemonic Component '" << Color::Yellow << Lexeme << Color::Reset <<"' already exists in this components table." <<Book::Fn::Endl << "-- Thus this program/service must be stopped right now."];
-//    Component::MnemonicEnums[Num] = Lexeme;
-//    return Component::MnemonicEnums.size();
-//}
 
 
 

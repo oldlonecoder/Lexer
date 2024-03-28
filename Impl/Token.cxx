@@ -31,17 +31,14 @@ std::map<Book::SVScanner::Numeric::Details::SizeType, Type::T> NumMap =
 
 std::string_view TokenInfo::LocationInfo::operator()() const
 {
-    std::string_view::iterator E = End;
     if(!Begin) return NullMsg;
-    if (!E) E = Begin + Length;
     Book::Debug() << " Length: " << Length;
-    return {Begin,E};
+    return {Begin,Length ? Length : Length+1};
 }
 
 [[maybe_unused]] std::string TokenInfo::LocationInfo::Position() const
 {
     StrAcc Txt = "%d,%d";
-
     return { (Txt << Line << Column)() };
 }
 
@@ -62,14 +59,14 @@ TokenInfo::~TokenInfo()
 std::string TokenInfo::Details() const
 {
     StrAcc Out;
-    Out << '\'' << Color::Yellow << *Text().end() <<
-    Color::Reset << "' [" <<
-    Color::Yellow << Name <<
-    Color::Reset << "] Primary Type:" <<
-    Color::DeepSkyBlue7 << Component::Name(Prim) <<
-    Color::Reset << "{" <<
-    Color::Turquoise4 <<  Component::Name(Sem) <<
-    Color::Reset << "}";
+    Out << '\'' << Color::Yellow << Text() <<
+        Color::Reset << "' [" <<
+        Color::Yellow << Name <<
+        Color::Reset << "] Primary Type:" <<
+        Color::DeepSkyBlue7 << Component::TypeName(Prim) <<
+        Color::Reset << "{" <<
+        Color::Turquoise4 << Component::TypeName(Sem) <<
+        Color::Reset << "}";
 
     return Out();
 }

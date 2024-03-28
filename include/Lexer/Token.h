@@ -38,8 +38,12 @@ struct LEXER_API TokenInfo
     Oper::T     D = Oper::Identifier;
 
     ~TokenInfo();
+
+    // From Book::SVScanner :
     Book::SVScanner::Numeric::Details* NumData{nullptr};
     void NumericTr();
+    // ------------------------------------------------
+
     struct LEXER_API LocationInfo
     {
         [[maybe_unused]] size_t Line{0};
@@ -72,7 +76,7 @@ struct LEXER_API TokenInfo
         if ((Flags.M) && (M == Mnemonic::Mul))
             return Lexem::Multiply;
         /* Overwrite source location. */
-        return Loc();
+        return {Loc.Begin, Loc.Length};
     }
 
 

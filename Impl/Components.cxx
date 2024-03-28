@@ -182,7 +182,7 @@ std::map<Type::T,     std::string_view> Component::TypeEnums
 //};
 
 
-std::string Component::Name(Type::T Typ)
+std::string Component::TypeName(Type::T Typ)
 {
     std::string Text;
     Type::T TypeBits = Typ;
@@ -205,7 +205,7 @@ std::string Component::Name(Type::T Typ)
     return Text;
 }
 
-Type::T Component::FromStr(const std::string &TName)
+Type::T Component::TypeEnum(const std::string &TName)
 {
     StrBreak SB;
     StrBreak::Word::Array Words;

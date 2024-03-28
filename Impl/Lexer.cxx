@@ -27,14 +27,15 @@ Book::Result Lexer::Engage()
         return Book::Result::Null_ptr;
     }
 
+
+
+    Book::Debug() << " Now Building the Tokens Reference Table:";
     mConfig.Production->DeclareTable();
     if(mConfig.Text.empty() || mConfig.Production->TokensRef().empty())
     {
         AppBook::Error() << " Config data is empty!";
         return Book::Result::Empty;
     }
-
-    Book::Debug() << " Now Building the Tokens Reference Table:";
 
     Book::Debug() << " Here is the Ref Table Dump:" ;
     mConfig.Production->DebugDumpRef();
@@ -45,13 +46,19 @@ Book::Result Lexer::Engage()
     Scanner.SkipWS();
 
     Book::Debug() << "Before entering the loop: ";
-    Book::Out() << " Scanner stopped at {" << Book::Fn::Endl << Scanner() << Book::Fn::Endl << "}";
+    Book::Out() << " Scanner position set at {" << Book::Fn::Endl << Scanner() << Book::Fn::Endl << "}";
     Book::Test() << " Entering the loop:";
     //return Book::Result::Ok;
     std::string_view::iterator Stop = Scanner(); // Save current position.
     while(!Scanner.Eof())
     {
-        if(!Tokenize(mConfig.Production->Scan(Scanner()))) return Book::Result::Rejected;
+        Book::Debug() << " Lexer::Loop: " << Scanner.Mark();
+
+        if(!Tokenize(mConfig.Production->Scan(Scanner())))
+        {
+            AppBook::Status() << " Stopped on Rejected TokenInfo: " << Book::Fn::Endl << Scanner.Mark();
+            return Book::Result::Rejected;
+        }
         if(Stop == Scanner())
         {
             AppBook::Error() << " loop: No Scanning" << Book::Fn::Endl << Scanner.Mark();
@@ -121,10 +128,14 @@ Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
         NewToken.Loc.End    = NewToken.NumData->Seq.end();
         NewToken.Prim       = Type::Number;
         NewToken.NumericTr();
-        PushToken(NewToken);
+        (*mConfig.Production) << NewToken;
+        Scanner.SkipWS();
+        Book::Debug() << "Pushed: " << NewToken.Details();
     }
     else
     {
+        auto [Ic,C] = Book::Enums::CodeAttributes(R.first);
+        Book::Debug() << " ScanNumber:" << C << Ic << Book::Enums::CodeText(R.first);
         Book::Debug() << " Test identifier:";
         return TokenizeIdentifier(NewToken);
     }
@@ -140,18 +151,26 @@ Book::Result Lexer::TokenizeUnaryOperator(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizePunctuation(TokenInfo &NewToken)
 {
-    Scanner.Sync();
+    Book::Debug() << " Sync'ing the Scanner:";
+    NewToken.Loc = Scanner.Sync();
+    NewToken.Loc.Begin = Scanner();
+    NewToken.Loc.End = NewToken.Loc.Begin + NewToken.Loc.Length-1;
+    NewToken.Name    = NewToken.Loc();
+    Book::Debug() << "Pushing New [Punctuation] Token";
     PushToken(NewToken);
-    Scanner.Reposition(NewToken.Loc.Offset + NewToken.Loc.Length);
-
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
 Book::Result Lexer::TokenizeKeyword(TokenInfo &NewToken)
 {
-
+    Book::Debug() << " Sync'ing the Scanner:";
+    NewToken.Loc = Scanner.Sync();
+    NewToken.Loc.Begin = Scanner();
+    NewToken.Loc.End = NewToken.Loc.Begin + NewToken.Loc.Length-1;
+    NewToken.Name    = NewToken.Loc();
+    Book::Debug() << "Pushing New [Keyword] Token";
     PushToken(NewToken);
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
 
@@ -163,30 +182,40 @@ Book::Result Lexer::TokenizeString(TokenInfo &NewToken)
 
 Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
 {
-    Book::Debug() << Scanner.Mark();
+    Book::Debug() << Scanner(); //Scanner.Mark();
 
     auto I = Scanner.Scan([this](){
 
         auto Start = Scanner();
         if(! std::isalpha(*Scanner()) && (*Scanner() != '_'))
             return Book::Result::Rejected;
+
         ++Scanner;
 
         while(!Scanner.Eof() && (std::isalnum(*Scanner()) || (*Scanner() == '_'))) ++Scanner;
-        if(Scanner() > Start)
+        if(Start < Scanner())
             return Book::Result::Accepted;
 
         return Book::Result::Rejected;
     });
 
-    NewToken.Loc = Scanner.Sync();;
+    if(!I.first)
+        return Book::Result::Rejected;
+
+    Book::Debug() << " Fill NewToken Infos (Scanner's LocationData -> NewToken::LocationInfo):";
+    NewToken.Loc = Scanner.Sync();
     NewToken.Loc.Length = static_cast<size_t>(I.second - I.first);
     NewToken.Loc.Begin = I.first;
-    NewToken.Loc.End = I.second;
+    NewToken.Loc.End = I.second - 1;
+    NewToken.Name    = NewToken.Loc();
     NewToken.Prim    = Type::Id;
     NewToken.Sem     = Type::Id|Type::Leaf;
     NewToken.Flags = { .V = 1 };
-    PushToken(NewToken);
+    Book::Debug() << "Pushing New [Identifier] Token";
+    (*mConfig.Production) << NewToken;
+    Scanner.SkipWS();
+    Book::Debug() << "Pushed: " << NewToken.Details();
+
     return Book::Result::Accepted;
 }
 
@@ -273,10 +302,10 @@ void Lexer::PushToken(TokenInfo &NewToken)
     //NewToken.Loc.Length = NewToken.Loc.End-NewToken.Loc.Begin;
 
     (*mConfig.Production) << NewToken;
-    //Scanner.Reposition(static_cast<int>(NewToken.Loc.Length));
+    Book::Debug() << "Pushed NewToken:" << NewToken.Details();
+    Scanner.Sync(NewToken.Loc.Length);
+    Book::Debug() << "SkipWS: ";
     Scanner.SkipWS();
-    Book::Debug() << Scanner.Mark();
-    //Book::Debug() << NewToken.Details();
 }
 
 TokenInfo::Array& Lexer::Production()
