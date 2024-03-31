@@ -998,7 +998,7 @@ TokenInfo TokenTable::Scan(const char* C)
 
     for (auto token : Ref)
     {
-        //Book::Debug() << "Token Ref '" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
+        Book::Debug() << "Token Ref loop:'" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
@@ -1063,7 +1063,7 @@ TokenInfo const &TokenTable::ByName(std::string_view MName)
     for(auto const& Token : Ref)
         if(Token.Name == MName) return Token;
 
-    throw AppBook::Exception() [Book::Fatal() << " Tokens identified by '" << Color::Yellow << MName << Color::Reset << " Is not in this table."];
+    throw AppBook::Exception() [Book::Fatal() << " Tokens identified by '" << Color::Yellow << MName << Color::Reset << "' Is not in this table."];
 }
 
 void TokenTable::DebugDumpProduct()
@@ -1072,6 +1072,15 @@ void TokenTable::DebugDumpProduct()
 
     for(auto const& Token : Product)
         Book::Out() << Token.Details();
+}
+
+TokenInfo const &TokenTable::ByMnemonicEnum(lex::Mnemonic::T M)
+{
+    for(auto const& Token : Ref)
+    {
+        if(Token.M == M) return Token;
+    }
+    throw AppBook::Exception() [Book::Fatal() << " Tokens identified by Enumerator " << Color::Yellow << static_cast<int>(M) << Color::Reset << " Is not in this table."];
 }
 
 

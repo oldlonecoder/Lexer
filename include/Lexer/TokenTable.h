@@ -49,6 +49,7 @@ public:
     void DebugDumpRef();
     void DebugDumpProduct();
     TokenInfo const& ByName(std::string_view MName);
+    TokenInfo const& ByMnemonicEnum(lex::Mnemonic::T M);
 
 protected:
 //    static size_t AddMnemonicsComponentFromThisTable(const TokenInfo::Array & Table);
