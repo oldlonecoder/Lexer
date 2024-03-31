@@ -5,6 +5,7 @@
 #include "Lexer/Token.h"
 
 #include <AppBook/Book/TScanner.h>
+#include <AppBook/Util/Geometry.h>
 
 static std::string_view NullMsg { "No String" };
 
@@ -68,7 +69,7 @@ TokenInfo::~TokenInfo()
 std::string TokenInfo::Details() const
 {
     StrAcc Out;
-    Out << '\'' << Color::Yellow << Text() <<
+    Out << (std::string)Point((int)Loc.Column,(int)Loc.Line) << '\'' << Color::Yellow << Text() <<
         Color::Reset << "' [" <<
         Color::Yellow << Name <<
         Color::Reset << "] Primary Type:" <<
