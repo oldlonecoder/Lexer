@@ -38,17 +38,20 @@ public:
     ConfigData& Config() { return mConfig; }
 
     Lexer() = default;
-    ~Lexer() = default;
+    virtual ~Lexer() = default;
 
-    Book::Result operator()();
-    Book::Result operator()(Lexer::ConfigData&& CfgData);
+    virtual Book::Result Execute();
 
 
+
+
+protected:
+    virtual Book::Result Loop();
+    Book::Result  State{Book::Result::Ok};
 
 private:
 
     void UpdateTokenLocation(TokenInfo& NewToken);
-    Book::Result Engage();
     Book::Result Tokenize(TokenInfo);
 
     ConfigData mConfig;

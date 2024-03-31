@@ -21,12 +21,12 @@ Book::Result Test::Run()
 
     lex::Lexer Lex;
     Lex.Config()={
-        .Text = "1+4-1;",
+        .Text = "65768+4-1;",
         .Production = &Tokens
     };
 
     try {
-        auto R = Lex();
+        auto R = Lex.Execute();
         auto [Ic, A] = Book::Enums::CodeAttributes(R);
 
         Book::Status() << " Lexer return : " << A << Ic << Book::Enums::CodeText(R) << Color::Reset << " -> ";
