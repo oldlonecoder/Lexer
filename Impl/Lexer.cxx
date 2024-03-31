@@ -56,8 +56,9 @@ Book::Result Lexer::Loop()
     {
         Book::Debug() << " Lexer::Loop: " << Scanner.Mark();
 
-        if(!Tokenize(mConfig.Production->Scan(Scanner())))
+        if(!Tokenize(mConfig.Production->Scan(Scanner()))) // Returned Eof!! WTF?
         {
+            if(Scanner.Eof() || (State == Book::Result::Eof)) return Book::Result::Accepted;
             AppBook::Status() << " Lexer Rejected Token at: " << Book::Fn::Endl << Scanner.Mark();
             return Book::Result::Rejected;
         }
@@ -94,14 +95,11 @@ Book::Result Lexer::Tokenize(TokenInfo Token)
         {Type::BlocComment      , &Lexer::TokenizeCommentBloc}
     };
 
-    Book::Result R{};
+    Book::Result R{Book::Result::Rejected};
     for(auto [T, Fn] : ScanFn)
     {
         if(T & Token.Sem)
-        {
-            if(!(R = (this->*Fn)(Token)))
-                return R;
-        }
+           return (this->*Fn)(Token);
     }
     return R;
 }
@@ -195,37 +193,39 @@ Book::Result Lexer::TokenizeString(TokenInfo &NewToken)
 Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
 {
     Book::Debug() << Scanner(); //Scanner.Mark();
+    auto I = Scanner.ScanIdentifier();
+    if(!I.first) return I.first;
 
-    auto I = Scanner.Scan([this](){
-
-        auto Start = Scanner();
-        if(! std::isalpha(*Scanner()) && (*Scanner() != '_'))
-            return Book::Result::Rejected;
-
-        State = ++Scanner ? Book::Result::Ok : Book::Result::Eof;
-
-        while(!Scanner.Eof() && (std::isalnum(*Scanner()) || (*Scanner() == '_'))) ++Scanner;
-        if(Start < Scanner())
-            return Book::Result::Accepted;
-
-        return Book::Result::Rejected;
-    });
-
-    if(!I.first)
-        return Book::Result::Rejected;
+//    auto I = Scanner.Scan([this](){
+//
+//        auto Start = Scanner();
+//        if(! std::isalpha(*Scanner()) && (*Scanner() != '_'))
+//            return Book::Result::Rejected;
+//
+//        State = ++Scanner ? Book::Result::Ok : Book::Result::Eof;
+//
+//        while(!Scanner.Eof() && (std::isalnum(*Scanner()) || (*Scanner() == '_'))) ++Scanner;
+//        if(Start < Scanner())
+//            return Book::Result::Accepted;
+//
+//        return Book::Result::Rejected;
+//    });
+//
+//    if(!I.first)
+//        return Book::Result::Rejected;
 
     Book::Debug() << " Fill NewToken Numeric literal Infos (Scanner's LocationData -> NewToken::LocationInfo):";
     NewToken.Loc = Scanner.Sync();
-    NewToken.Loc.Length = static_cast<size_t>(I.second - I.first);
-    NewToken.Loc.Begin = I.first;
-    NewToken.Loc.End = I.second - 1;
+    NewToken.Loc.Length = I.second.length();
+    NewToken.Loc.Begin = I.second.begin();
+    NewToken.Loc.End = I.second.end() - 1;
     NewToken.Name    = NewToken.Loc();
     NewToken.Prim    = Type::Id;
     NewToken.Sem     = Type::Id|Type::Leaf;
     NewToken.Flags = { .V = 1 };
     Book::Debug() << "Pushing New [Identifier] Token";
     (*mConfig.Production) << NewToken;
-    //(void)Scanner.Sync(NewToken.Loc.Length);
+    Scanner.Step(static_cast<int32_t>(NewToken.Loc.Length));
     Scanner.SkipWS();
     Book::Debug() << "Pushed: " << NewToken.Details();
 
