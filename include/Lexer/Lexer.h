@@ -27,7 +27,6 @@ namespace lex
 
 class LEXER_API Lexer
 {
-    Book::TScanner Scanner{};
 public:
 
     struct LEXER_API ConfigData
@@ -46,31 +45,32 @@ public:
 
 
 protected:
+    Book::TScanner Scanner{};
     virtual Book::Result Loop();
     Book::Result  State{Book::Result::Ok};
+    void PushToken(TokenInfo& Token);
 
-private:
 
     void UpdateTokenLocation(TokenInfo& NewToken);
     Book::Result Tokenize(TokenInfo);
 
     ConfigData mConfig;
 
-    Book::Result TokenizeIdentifier    (TokenInfo &NewToken);
-    Book::Result TokenizeBinaryOperator(TokenInfo&);
-    Book::Result TokenizeDefault       (TokenInfo& NewToken);
-    Book::Result TokenizeUnaryOperator (TokenInfo& NewToken);
-    Book::Result TokenizePunctuation   (TokenInfo& NewToken);
-    Book::Result TokenizeKeyword       (TokenInfo& NewToken);
-    Book::Result TokenizeString        (TokenInfo& NewToken);
-    Book::Result TokenizeSignPrefix    (TokenInfo& NewToken);
-    Book::Result TokenizePrefix        (TokenInfo& NewToken);
-    Book::Result TokenizePostfix       (TokenInfo& NewToken);
-    Book::Result TokenizeCppComment    (TokenInfo& NewToken);
-    Book::Result TokenizeCommentBloc   (TokenInfo& NewToken);
+    virtual Book::Result TokenizeIdentifier    (TokenInfo &NewToken);
+    virtual Book::Result TokenizeBinaryOperator(TokenInfo&);
+    virtual Book::Result TokenizeDefault       (TokenInfo& NewToken);
+    virtual Book::Result TokenizeUnaryOperator (TokenInfo& NewToken);
+    virtual Book::Result TokenizePunctuation   (TokenInfo& NewToken);
+    virtual Book::Result TokenizeKeyword       (TokenInfo& NewToken);
+    virtual Book::Result TokenizeString        (TokenInfo& NewToken);
+    virtual Book::Result TokenizeSignPrefix    (TokenInfo& NewToken);
+    virtual Book::Result TokenizePrefix        (TokenInfo& NewToken);
+    virtual Book::Result TokenizePostfix       (TokenInfo& NewToken);
+    virtual Book::Result TokenizeCppComment    (TokenInfo& NewToken);
+    virtual Book::Result TokenizeCommentBloc   (TokenInfo& NewToken);
     TokenInfo::Array& Production();
 
-    void PushToken(TokenInfo& Token);
+
 };
 
 } // lex
