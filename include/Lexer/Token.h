@@ -19,7 +19,7 @@
 
 
 #include "Lexer/Components.h"
-#include <AppBook/Book/SVScanner.h>
+#include <AppBook/Book/TScanner.h>
 
 namespace lex
 {
@@ -29,7 +29,7 @@ struct LEXER_API TokenInfo
     using Array      = std::vector<TokenInfo>;
     using Iterator   = TokenInfo::Array::iterator;
     using CIterator  = TokenInfo::Array::const_iterator;
-    using SVIterator = std::string_view::iterator;
+
 
     Type::T     Prim = Type::Null;
     Type::T     Sem  = Type::Null;
@@ -39,8 +39,8 @@ struct LEXER_API TokenInfo
 
     ~TokenInfo();
 
-    // From Book::SVScanner :
-    Book::SVScanner::Numeric::Details* NumData{nullptr};
+    // From Book::TScanner :
+    Book::TScanner::Numeric::Details* NumData{nullptr};
     void NumericTr();
     // ------------------------------------------------
 
@@ -50,11 +50,11 @@ struct LEXER_API TokenInfo
         [[maybe_unused]] size_t Column{0};
         [[maybe_unused]] size_t Offset{0};
         [[maybe_unused]] size_t Length{0};
-        TokenInfo::SVIterator Begin{};
-        TokenInfo::SVIterator End{};
-        std::string_view operator()() const;
+        const char* Begin{};
+        const char* End{};
+        std::string_view operator()();
         [[maybe_unused]] [[nodiscard]] std::string Position() const;
-        TokenInfo::LocationInfo& operator = (Book::SVScanner::LocationData const& Data);
+        TokenInfo::LocationInfo& operator = (Book::TScanner::LocationData const& Data);
 
     }Loc;
 
@@ -76,6 +76,9 @@ struct LEXER_API TokenInfo
         if ((Flags.M) && (M == Mnemonic::Mul))
             return Lexem::Multiply;
         /* Overwrite source location. */
+        if(!Loc.Length)
+            return Loc.Begin; // This token is a ref token.
+
         return {Loc.Begin, Loc.Length};
     }
 

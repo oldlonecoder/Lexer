@@ -8,16 +8,38 @@ namespace lex
 {
 Test::Test(const std::string &AppID, int argc, char** argv): Book::ApplicationSkel(AppID, argc, argv) {}
 
-Test::~Test()
-{
-
-}
+//Test::~Test()
+//{
+//
+//}
 
 Book::Result Test::Run()
 {
     Setup();
 
+    lex::TokenTable Tokens;
 
+    lex::Lexer Lex;
+    Lex.Config()={
+        .Text = "1+4-1;",
+        .Production = &Tokens
+    };
+
+    try {
+        auto R = Lex();
+        auto [Ic, A] = Book::Enums::CodeAttributes(R);
+
+        Book::Status() << " Lexer return : " << A << Ic << Book::Enums::CodeText(R) << Color::Reset << " -> ";
+        Tokens.DebugDumpProduct();
+    }
+    catch(AppBook::Exception& E)
+    {
+        std::cerr << E.what() << std::endl; // Yep, `<< std::endl` is faster than `<< '\n'` !!!
+    }
+    catch(std::exception& E)
+    {
+        std::cerr << E.what() << std::endl; // Yep, `<< std::endl` is faster than `<< '\n'` !!!
+    }
 
     return Book::Result::Ok;
 }

@@ -39,7 +39,7 @@ public:
     TokenTable(Util::Object* Par, const std::string& TableName);
     ~TokenTable() override;
 
-    TokenInfo Scan( TokenInfo::SVIterator C);
+    TokenInfo Scan( const char* C);
 
     [[maybe_unused]] virtual size_t DeclareTable();
     TokenInfo::Array& TokensRef() { return Ref; }

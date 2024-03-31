@@ -31,7 +31,7 @@ class Test : public Book::ApplicationSkel
 public:
     Test() = default;
     Test(const std::string& AppID, int argc=0, char** argv=nullptr);
-    ~Test() override;
+    ~Test() override = default;
 
     Book::Result Run() override;
 protected:

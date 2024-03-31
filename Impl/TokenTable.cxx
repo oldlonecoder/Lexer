@@ -983,7 +983,7 @@ TokenTable::~TokenTable()
     Ref.clear();
 }
 
-TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
+TokenInfo TokenTable::Scan(const char* C)
 {
     Book::Debug() << " :" << *C;
     if(Ref.empty())
@@ -998,17 +998,17 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 
     for (auto token : Ref)
     {
-        Book::Debug() << "Token Ref '" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
+        //Book::Debug() << "Token Ref '" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
         if(*crs != *rtxt) {
-            Book::Debug() << *crs << " <> " << *rtxt;
+            //Book::Debug() << *crs << " <> " << *rtxt;
             continue;
         }
-        Book::Debug() << *crs << " <==> " << *rtxt;
+        //Book::Debug() << *crs << " <==> " << *rtxt;
         while ((rtxt && crs) && (*crs && *rtxt) && (*crs == *rtxt))
         {
             if (*crs < 0)
@@ -1016,7 +1016,7 @@ TokenInfo TokenTable::Scan(TokenInfo::SVIterator C)
 
             ++crs;
             ++rtxt;
-            Book::Debug() << *crs << " <==> " << ( rtxt ?  *rtxt : ' ');
+            //Book::Debug() << *crs << " <==> " << ( rtxt ?  *rtxt : ' ');
         }
         if (!rtxt || (*rtxt == 0))
         {

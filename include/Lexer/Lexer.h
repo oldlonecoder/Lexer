@@ -17,7 +17,7 @@
 #pragma once
 
 #include "Lexer/TokenTable.h"
-#include <AppBook/Book/SVScanner.h>
+#include <AppBook/Book/TScanner.h>
 
 //#ifndef LEXER_LEXER_H
 //#define LEXER_LEXER_H
@@ -27,7 +27,7 @@ namespace lex
 
 class LEXER_API Lexer
 {
-    Book::SVScanner Scanner{};
+    Book::TScanner Scanner{};
 public:
 
     struct LEXER_API ConfigData
