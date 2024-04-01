@@ -21,7 +21,7 @@ Book::Result Test::Run()
 
     lex::Lexer Lex;
     Lex.Config()={
-        .Text = "65768+4-1;",
+        .Text = "BabySpi = 65768+4-1;",
         .Production = &Tokens
     };
 
