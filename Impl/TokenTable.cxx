@@ -998,14 +998,14 @@ TokenInfo TokenTable::Scan(const char* C)
 
     for (auto token : Ref)
     {
-        Book::Debug() << "Token Ref loop:'" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << ") :";
+        Book::Debug() << "Token Ref loop:'" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << "<=>" << Color::Lime << *C << Color::Reset << "):";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
         if(*crs != *rtxt) {
-            //Book::Debug() << *crs << " <> " << *rtxt;
+            Book::Debug() << *crs << " != " << *rtxt;
             continue;
         }
         //Book::Debug() << *crs << " <==> " << *rtxt;
@@ -1022,7 +1022,7 @@ TokenInfo TokenTable::Scan(const char* C)
         {
             if (*crs && !isspace(*crs))
             {
-                if ((isalnum(*crs) || (*crs == '_')) && !token.HasType(Type::Operator|Type::Punc))
+                if ((isalnum(*crs) || (*crs == '_')) && !token.HasType(Type::Operator|Type::Punc|Type::Keyword))
                     continue;
             }
 
