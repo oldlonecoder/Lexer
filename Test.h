@@ -17,7 +17,8 @@
 #pragma once
 
 #include <Lexer/Lexer.h>
-#include <BookApplicationSkel/ApplicationSkel.h>
+#include <AppBook/Book/ApplicationBase.h>
+
 
 //#ifndef LEXER_TEST_H
 //#define LEXER_TEST_H
@@ -25,7 +26,7 @@
 namespace lex
 {
 
-class Test : public Book::ApplicationSkel
+class Test : public Book::ApplicationBase
 {
 
 public:

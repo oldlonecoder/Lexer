@@ -6,7 +6,7 @@
 
 namespace lex
 {
-Test::Test(const std::string &AppID, int argc, char** argv): Book::ApplicationSkel(AppID, argc, argv) {}
+Test::Test(const std::string &AppID, int argc, char** argv): Book::ApplicationBase(AppID, argc, argv) {}
 
 //Test::~Test()
 //{
@@ -21,7 +21,7 @@ Book::Result Test::Run()
 
     lex::Lexer Lex;
     Lex.Config()={
-        .Text = "BabySpi = 65768+4-1;",
+        .Text = "BebeSpi = 65768+4-1;",
         .Production = &Tokens
     };
 
@@ -46,12 +46,11 @@ Book::Result Test::Run()
 
 Book::Result Test::Setup()
 {
-    ApplicationSkel::Setup();
+    ApplicationBase::Setup();
 
     AppBook::CreateSection("Lexer-Test").Open().CreateSectionContents("DevJournal");
     Book::Select()["Lexer-Test"]["DevJournal"];
     Book::Debug() << " Lexer tests are ready to begin...";
-
 
     return Book::Result::Ok;
 }

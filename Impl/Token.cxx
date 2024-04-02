@@ -66,7 +66,7 @@ TokenInfo::~TokenInfo()
     //delete NumData;
 }
 
-std::string TokenInfo::Details() const
+std::string TokenInfo::Details(bool Frame) const
 {
     StrAcc Out;
     Out << (std::string)Point((int)Loc.Column,(int)Loc.Line) << '\'' << Color::Yellow << Text() <<

@@ -47,7 +47,7 @@ target_include_directories(${TargetName} PUBLIC
 target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} AppBook)
 
 add_executable(Test.xApp Test.cxx Test.h)
-target_link_libraries(Test.xApp BookApplicationSkel Lexer)
+target_link_libraries(Test.xApp Lexer)
 
 
 

@@ -985,7 +985,7 @@ TokenTable::~TokenTable()
 
 TokenInfo TokenTable::Scan(const char* C)
 {
-    Book::Debug() << " :" << *C;
+    //Book::Debug() << " :" << *C;
     if(Ref.empty())
     {
         AppBook::Warning() << " Tokens reference table is empty";
@@ -998,14 +998,14 @@ TokenInfo TokenTable::Scan(const char* C)
 
     for (auto token : Ref)
     {
-        Book::Debug() << "Token Ref loop:'" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << "<=>" << Color::Lime << *C << Color::Reset << "):";
+        //Book::Debug() << "Token Ref loop:'" << Color::Yellow << token.Name << Color::Reset << ": (" << Color::HotPink4 << token.Loc.Begin << Color::Reset << "<=>" << Color::Lime << *C << Color::Reset << "):";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.Loc.Begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
         if(*crs != *rtxt) {
-            Book::Debug() << *crs << " != " << *rtxt;
+            //Book::Debug() << *crs << " != " << *rtxt;
             continue;
         }
         //Book::Debug() << *crs << " <==> " << *rtxt;
@@ -1055,7 +1055,7 @@ void TokenTable::DebugDumpRef()
 
 
 
-TokenInfo const &TokenTable::ByName(std::string_view MName)
+TokenInfo const &TokenTable::Get(std::string_view MName)
 {
     if(Ref.empty())
         throw AppBook::Exception() [Book::Fatal() << " Tokens Table is empty!"];
@@ -1074,7 +1074,7 @@ void TokenTable::DebugDumpProduct()
         Book::Out() << Token.Details();
 }
 
-TokenInfo const &TokenTable::ByMnemonicEnum(lex::Mnemonic::T M)
+TokenInfo const &TokenTable::Get(lex::Mnemonic::T M)
 {
     for(auto const& Token : Ref)
     {
