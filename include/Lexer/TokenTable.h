@@ -43,7 +43,7 @@ public:
 
     [[maybe_unused]] virtual size_t DeclareTable();
     TokenInfo::Array& TokensRef() { return Ref; }
-
+    TokenInfo::Array& Production() { return  Product; }
     TokenTable& operator << (TokenInfo& NewToken);
 
     void DebugDumpRef();
