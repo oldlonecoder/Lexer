@@ -192,6 +192,8 @@ namespace Mnemonic
     constexpr T Noop             = 118;
     constexpr T LineComment      = 119;
     constexpr T BlocComment      = 120;
+    constexpr T Identifier       = 1000;
+    constexpr T Numeric          = 1001;
 
 };
 
@@ -312,6 +314,8 @@ constexpr T Try           = "try";
 constexpr T LineComment   = "//";
 constexpr T BlocComment   = "/*";
 
+constexpr T Identifier    = "Identifier/Symbol";
+constexpr T Numeric       = "Literal Number";
 
 } // namespace MLex
 

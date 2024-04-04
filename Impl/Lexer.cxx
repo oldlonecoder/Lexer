@@ -132,6 +132,7 @@ Book::Result Lexer::TokenizeDefault(TokenInfo &NewToken)
         NewToken.Loc.Begin  = NewToken.NumData->Seq.begin();
         NewToken.Loc.End    = NewToken.NumData->Seq.end();
         NewToken.Prim       = Type::Number;
+        NewToken.Name       = lex::Lexem::Numeric;
         State = Scanner.Step(static_cast<int32_t>(NewToken.NumData->Seq.length()));
         NewToken.NumericTr();
         (*mConfig.Production) << NewToken;
@@ -219,7 +220,7 @@ Book::Result Lexer::TokenizeIdentifier(TokenInfo &NewToken)
     NewToken.Loc.Length = I.second.length();
     NewToken.Loc.Begin = I.second.begin();
     NewToken.Loc.End = I.second.end() - 1;
-    NewToken.Name    = NewToken.Loc();
+    NewToken.Name    = lex::Lexem::Identifier;
     NewToken.Prim    = Type::Id;
     NewToken.Sem     = Type::Id|Type::Leaf;
     NewToken.Flags = { .V = 1 };
